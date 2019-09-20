@@ -15,4 +15,10 @@ public class UserService implements UserMapper {
         System.out.println("执行到service");
         usermapper.insert(user);
     }
+
+    @Override
+    public User findByToken(String token) {
+
+        return usermapper.findByToken(token);
+    }
 }
