@@ -21,4 +21,12 @@ public class UserService implements UserMapper {
 
         return usermapper.findByToken(token);
     }
+
+    @Override
+    public User findById(Integer creator) {
+        User user = usermapper.findById(creator);
+        System.out.println("头像地址***********"+user.getAvatarUrl());
+        return user;
+
+    }
 }
