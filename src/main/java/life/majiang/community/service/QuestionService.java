@@ -52,4 +52,49 @@ public class QuestionService{
     public  Integer count(){
         return  quesstionMapper.count();
     }
+
+    public PaginationDTO Personallist(Integer userId) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+        Integer totalCount = quesstionMapper.countByUserId(userId);
+        Integer totalPage;
+
+        List<Question> questions = quesstionMapper.listByUserId(userId);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        for (Question question:questions){
+            User user = userMapper.findById(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+//          questionDTO.setId(question.getId());  //比较古老的方法
+            //快速将question中的所有属性拷贝到questionDTO中
+            BeanUtils.copyProperties(question,questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        paginationDTO.setQuestions(questionDTOList);
+        return paginationDTO;
+    }
+
+    public QuestionDTO getById(Integer id) {
+        Question question = quesstionMapper.getById(id);
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question,questionDTO);
+        questionDTO.setUser(userMapper.findById(question.getCreator()));
+        return questionDTO;
+    }
+
+    public void createOrUpdate(Question question) {
+        if (question.getId() == null){
+            //创建问题
+            question.setGmtCreate(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreate());
+            quesstionMapper.creat(question);
+        } else {
+            //更新
+            question.setGmtModified(System.currentTimeMillis());
+            quesstionMapper.update(question);
+        }
+    }
+
+    public Integer countByUserId(Integer userId){
+        return quesstionMapper.countByUserId(userId);
+    }
 }
